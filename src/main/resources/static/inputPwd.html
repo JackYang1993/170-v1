@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>重置密码</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="css/style-user.css">
+    <script src="js/jquery-1.8.3.js"></script>
+</head>
+<body>
+
+<div class="login-main">
+    <header class="layui-elip">重置密码</header>
+    <form class="layui-form">
+        <div class="layui-input-inline">
+            <input type="text" name="pwd1" id="pwd1"  lay-verify="required" placeholder="密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-input-inline">
+            <input type="text" name="pwd2"  lay-verify="required" placeholder="再次输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-input-inline login-btn">
+            <button lay-submit lay-filter="updatePwd" class="layui-btn">确定</button>
+        </div>
+    </form>
+</div>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['form'],function () {
+        var form = layui.form;
+
+        form.on('submit(updatePwd)',function () {
+
+            var pwd1 = $("#pwd1").val();     //密码
+            var token = queryParam('token')  //获取用户邮箱
+            $.ajax({
+                url:'user/update.do',
+                data:'password='+pwd1+'&token='+token,
+                dataType:'json',
+                success:function (result) {
+                    if(result.flag){
+                        layer.msg('密码修改成功');
+                        window.setTimeout(function () {
+                            location.href = 'login.html';
+                        },2000)
+                    }else {
+                        layer.msg(result.msg)
+                    }
+                }
+            })
+
+            return false;
+        })
+
+    })
+
+    //定义一个函数：根据请求参数的key获取value值
+    function queryParam(key) {
+        var arr1 = window.location.search.substr(1).split("&");  //['a1=zhangsan','a2=hehe']
+        for (var i=0;i<arr1.length;i++){
+            var arr2 = arr1[i].split('=')                                  //['a1','zhangsan']
+            console.log(arr2[1]);
+            if(arr2[0] == key){
+                return arr2[1];
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

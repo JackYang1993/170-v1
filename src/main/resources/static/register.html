@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="css/style-user.css">
+    <script src="js/jquery-1.8.3.js"></script>
+</head>
+<body>
+
+<div class="login-main">
+    <header class="layui-elip">注册</header>
+    <form class="layui-form" id="regForm">
+        <div class="layui-input-inline">
+            <input type="text" name="username"  id="username"
+                   lay-verify="email" placeholder="用户名" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-input-inline">
+            <input type="password" name="password"  lay-verify="required" placeholder="密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-input-inline">
+            <div class="layui-col-xs7">
+                <input type="password" name="code"  lay-verify="required" placeholder="验证码" autocomplete="off"
+                       class="layui-input">
+            </div>
+            <div class=" layui-col-xs-offset1 layui-col-xs4">
+                <button type="button" id="send"
+                        class="layui-btn layui-btn-normal layui-btn-sm">发送验证码</button>
+            </div>
+        </div>
+        <div class="layui-input-inline login-btn">
+            <button lay-submit lay-filter="register" class="layui-btn">注册</button>
+        </div>
+        <hr/>
+        <p><a href="login.html" class="fl">立即登录</a><a href="findPwd.html" class="fr">忘记密码？</a></p>
+    </form>
+</div>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['form'],function () {
+        var form = layui.form;
+
+        form.on('submit(register)',function () {
+            
+            $.ajax({
+                url:'user/reg',
+                data:$("#regForm").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    if(result.flag){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        location.href = "login.html";
+                    }else {
+                        layer.msg(result.msg);
+                    }
+                }
+            })
+            return false;
+        })
+        
+        
+        
+        //给发送按钮绑定点击事件
+        $("#send").click(function () {
+
+            var usernameVal = $("#username").val(); //获取用户名
+            if(usernameVal == ''){
+                layer.msg('请填写用户名邮箱地址');
+                return;
+            }
+
+            //执行ajax请求，让后台发送邮件
+            $.ajax({
+                url:'user/sendMail',
+                data:'username='+usernameVal,
+            })
+
+
+            $("#send").prop("disabled",true);           //让按钮禁用
+            $("#send").removeClass("layui-btn-normal"); //移出默认样式
+            $("#send").addClass("layui-btn-disabled"); //添加禁用样式
+
+            //定时器
+            var s1 = 60;
+            var id = window.setInterval(function () {
+                $("#send").html(s1+"S后重新发送");
+                s1--;
+                if(s1 == 0){   //可以发送了
+                    window.clearInterval(id); //根据id清除定时器
+
+                    $("#send").prop("disabled",false);           //让按钮启用
+                    $("#send").removeClass("layui-btn-disabled"); //移出禁用样式
+                    $("#send").addClass("layui-btn-normal"); //添加默认样式
+                    $("#send").html("发送验证码");
+                }
+            },1000)
+
+        })
+
+
+    })
+</script>
+
+</body>
+</html>

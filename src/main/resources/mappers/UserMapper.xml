@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.usermanager.dao.UserDAO">
+
+
+    <!-- 决定当前mapper文件中的查询会使用mybatis的二级缓存
+        type="org.apache.ibatis.cache.impl.PerpetualCache"
+        PerpetualCachemybatis自带的缓存类，默认情况下数据就是存储在这类中的cache属性中了
+        private Map<Object, Object> cache = new HashMap();
+        思路：
+        如果你希望使用redis管理mybatis的缓存，自定义一个类，实现Cache接口，实现接口中增删等方法
+        例如在添加方法中，将数据存储redis中,并且将type写成自定义的这个类全类名
+    -->
+    <!-- mybatis自带缓存-->
+    <!--<cache type="org.apache.ibatis.cache.impl.PerpetualCache"/>-->
+    <!-- redis-mybatis管理缓存  -->
+    <cache type="org.mybatis.caches.redis.RedisCache" ></cache>
+
+    <select id="select" resultType="User" >
+        select * from t_user
+    </select>
+
+    <select id="selectUserByNameAndPwd" resultType="User">
+        select * from t_user where username = #{username} and password = #{password}
+    </select>
+
+    <select id="selectUserByName" resultType="User">
+        select * from t_user where username = #{username}
+    </select>
+
+    <insert id="insert" flushCache="false">
+        insert into t_user values(null,#{username},#{password})
+    </insert>
+
+    <update id="update">
+        update t_user set password = #{password} where username = #{username}
+    </update>
+
+</mapper>
